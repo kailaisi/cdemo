@@ -16,6 +16,8 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags ""
+                //设置对应的编译so文件的平台
+                abiFilters "armeabi-v7a"
             }
         }
         ndk{
@@ -30,6 +32,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    //设置对应的配置文件路径
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
