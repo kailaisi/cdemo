@@ -23,6 +23,7 @@ android {
         ndk{
             moduleName "HelloJni"
             ldLibs "log","z","m"
+            abiFilters "armeabi"
         }
     }
 

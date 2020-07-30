@@ -93,3 +93,10 @@ Java_com_example_cdemo_MainActivity_printPerson(JNIEnv *env, jobject thiz) {
     env->DeleteLocalRef(person);
 
 }
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_example_cdemo_JniUtils_remuxe(JNIEnv *env, jobject thiz, jstring inpath,
+                                       jstring out_path) {
+    // TODO: implement remuxe()
+}
