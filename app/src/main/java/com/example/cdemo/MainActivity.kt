@@ -65,4 +65,16 @@ class MainActivity : AppCompatActivity() {
     fun callJavaMethod(view: View) {
         threadDemo.callBack()
     }
+
+    /**
+     * 播放prm音频文件
+     */
+    fun playPrm(view: View) {
+        val path="/mnt/sdcard/a.pcm"
+        playprm(path)
+    }
+
+    external fun playprm(path: String)
+
+
 }
