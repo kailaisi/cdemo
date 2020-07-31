@@ -2,12 +2,23 @@ package com.example.cdemo
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     var testField = "this is test";
+    private val threadDemo by lazy {
+        var threadDemo1 = ThreadDemo()
+        threadDemo1.onErrorListener = object : OnErrorListener {
+            override fun onError(code: Int, msg: String) {
+                println("code:$code,msg:$msg")
+            }
+        }
+        threadDemo1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,10 +49,20 @@ class MainActivity : AppCompatActivity() {
     external fun dynamicJavaFunc2(i: Int): Int
 
     companion object {
-        // Used to load the 'native-lib' library on application startup.
         init {
-            /*这里的lib名称，是和CMakeLists中的lib名称对应的*/
             System.loadLibrary("native-lib")
         }
+    }
+
+    fun normal(view: View) {
+        threadDemo.normalThread()
+    }
+
+    fun mutexThread(view: View) {
+        threadDemo.mutexThread()
+    }
+
+    fun callJavaMethod(view: View) {
+        threadDemo.callBack()
     }
 }
