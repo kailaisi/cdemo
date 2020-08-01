@@ -7,8 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
+        }
+    }
+
     private val TAG = "MainActivity"
-    var testField = "this is test";
+    var testField = "this is test"
+
     private val threadDemo by lazy {
         var threadDemo1 = ThreadDemo()
         threadDemo1.onErrorListener = object : OnErrorListener {
@@ -24,17 +33,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         // Example of a call to a native method
         sample_text.text = stringFromJNI()
-        testFIeld()
+        testField()
         printPerson()
         Log.d(TAG, "onCreate:newField: $testField")
         dynamicJavaFunc1()
         dynamicJavaFunc2(16)
     }
 
+    external fun testField(): Unit
+
     /*静态注册的方法*/
     external fun printPerson(): Unit
-
-    external fun testFIeld(): Unit
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
@@ -48,11 +57,6 @@ class MainActivity : AppCompatActivity() {
     external fun dynamicJavaFunc1()
     external fun dynamicJavaFunc2(i: Int): Int
 
-    companion object {
-        init {
-            System.loadLibrary("native-lib")
-        }
-    }
 
     fun normal(view: View) {
         threadDemo.normalThread()
@@ -70,11 +74,10 @@ class MainActivity : AppCompatActivity() {
      * 播放prm音频文件
      */
     fun playPrm(view: View) {
-        val path="/mnt/sdcard/a.pcm"
+        val path = "/mnt/sdcard/audio_long8.pcm"
         playprm(path)
     }
 
     external fun playprm(path: String)
-
 
 }
