@@ -7,8 +7,26 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
+            //加载so包是有序的一定要那么写，不过这里我是复制过来的，所以没出现问题
+            System.loadLibrary("avutil-56");
+            System.loadLibrary("swresample-3");
+            System.loadLibrary("avcodec-58");
+            System.loadLibrary("avfilter-7");
+            System.loadLibrary("swscale-5");
+            System.loadLibrary("avdevice-58");
+            System.loadLibrary("avformat-58");
+            System.loadLibrary("postproc-55");
+        }
+    }
+
     private val TAG = "MainActivity"
-    var testField = "this is test";
+    var testField = "this is test"
+
     private val threadDemo by lazy {
         var threadDemo1 = ThreadDemo()
         threadDemo1.onErrorListener = object : OnErrorListener {
@@ -24,12 +42,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         // Example of a call to a native method
         sample_text.text = stringFromJNI()
-        testFIeld()
+        testField()
         printPerson()
         Log.d(TAG, "onCreate:newField: $testField")
         dynamicJavaFunc1()
         dynamicJavaFunc2(16)
     }
+
+    external fun testField(): Unit
 
     /*静态注册的方法*/
     external fun printPerson(): Unit
@@ -48,20 +68,6 @@ class MainActivity : AppCompatActivity() {
     external fun dynamicJavaFunc1()
     external fun dynamicJavaFunc2(i: Int): Int
 
-    companion object {
-        init {
-            System.loadLibrary("native-lib")
-            //加载so包是有序的一定要那么写，不过这里我是复制过来的，所以没出现问题
-            System.loadLibrary("avutil-56");
-            System.loadLibrary("swresample-3");
-            System.loadLibrary("avcodec-58");
-            System.loadLibrary("avfilter-7");
-            System.loadLibrary("swscale-5");
-            System.loadLibrary("avdevice-58");
-            System.loadLibrary("avformat-58");
-            System.loadLibrary("postproc-55");
-        }
-    }
 
     fun normal(view: View) {
         threadDemo.normalThread()
@@ -79,11 +85,10 @@ class MainActivity : AppCompatActivity() {
      * 播放prm音频文件
      */
     fun playPrm(view: View) {
-        val path="/mnt/sdcard/a.pcm"
+        val path = "/mnt/sdcard/audio_long8.pcm"
         playprm(path)
     }
 
     external fun playprm(path: String)
-
 
 }

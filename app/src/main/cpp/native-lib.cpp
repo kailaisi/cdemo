@@ -49,7 +49,7 @@ Java_com_example_cdemo_MainActivity_setArray(JNIEnv *env, jobject thiz, jintArra
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_cdemo_MainActivity_testFIeld(JNIEnv *env, jobject thiz) {
+Java_com_example_cdemo_MainActivity_testField(JNIEnv *env, jobject thiz) {
     jclass jclass1 = env->GetObjectClass(thiz);
     jfieldID jfieldId = env->GetFieldID(jclass1, "testField", "Ljava/lang/String;");
     jstring jstr = static_cast<jstring>(env->GetObjectField(thiz, jfieldId));
@@ -61,6 +61,7 @@ Java_com_example_cdemo_MainActivity_testFIeld(JNIEnv *env, jobject thiz) {
     //释放资源
     env->ReleaseStringUTFChars(jstr, cStr);
 }
+
 
 extern "C"
 JNIEXPORT void JNICALL

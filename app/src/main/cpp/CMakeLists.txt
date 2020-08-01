@@ -16,7 +16,6 @@ add_library( # Sets the name of the library.
         # Sets the library as a shared library.
         #设置是动态库（SHARED），还是静态库（STATIC）
         SHARED
-
         # Provides a relative path to your source file(s).
         #设置源文件的相对路径
         extra.h
