@@ -30,7 +30,16 @@ add_library( # Sets the name of the library.
         #设置源文件的相对路径
         ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
         ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp)
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/global.h
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.h
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/thread.cpp
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.cpp
+         ${CMAKE_SOURCE_DIR}/src/main/cpp/sles.cpp
+        )
 
 #搜索并指定预构建库并将路径存储为变量
 #CMake已经包含了ndk中的系统类库。所以这里只需要添加你需要添加的其他类库
@@ -97,6 +106,7 @@ set_target_properties( postproc
 #指定CMake应链接到目标库的库。这里可以设置多个
 target_link_libraries( # Specifies the target library.
         native-lib
+        OpenSLES
         avutil #工具库(大部分需要)
         swresample#音频采样数据格式转换
         avcodec#编解码(重要)

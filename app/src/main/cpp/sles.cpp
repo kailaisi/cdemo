@@ -148,5 +148,4 @@ Java_com_example_cdemo_MainActivity_playprm(JNIEnv *env, jobject thiz, jstring p
      * 手动激活回调函数
      */
     bqPlayerCallBack(bqPlayerBufferQueue, NULL);
-
 }
