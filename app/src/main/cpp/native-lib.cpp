@@ -2,15 +2,9 @@
 #include <string>
 #include <android/log.h>
 #include "extra.h"
-#define TAG "native Info"
-#ifndef LOG_TAG
-#define LOG_TAG "HELL_JNI"
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG ,__VA_ARGS__) // 定义LOGD类型
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,LOG_TAG ,__VA_ARGS__) // 定义LOGI类型
-#define LOGW(...) __android_log_print(ANDROID_LOG_WARN,LOG_TAG ,__VA_ARGS__) // 定义LOGW类型
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG ,__VA_ARGS__) // 定义LOGE类型
-#define LOGF(...) __android_log_print(ANDROID_LOG_FATAL,LOG_TAG ,__VA_ARGS__) // 定义LOGF类型
-#endif
+#include "android_log.h"
+#include "JavaListener.h"
+
 extern "C" JNIEXPORT jstring
 Java_com_example_cdemo_MainActivity_stringFromJNI(JNIEnv *env, jobject thiz) {
     std::string hello = getString();
@@ -27,7 +21,7 @@ Java_com_example_cdemo_MainActivity_stringFromJNI(JNIEnv *env, jobject thiz) {
     //调用getName方法
     jstring name = static_cast<jstring >(env->CallObjectMethod(instance, mid_getName));
     LOGD("class name:%s", env->GetStringUTFChars(name, 0));
-    //
+    //资源的释放
     env->DeleteLocalRef(thisclazz);
     env->DeleteLocalRef(clazz);
     env->DeleteLocalRef(instance);
@@ -71,27 +65,26 @@ Java_com_example_cdemo_MainActivity_testFIeld(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_cdemo_MainActivity_printPerson(JNIEnv *env, jobject thiz) {
-    jclass  pClass=env->FindClass("com/example/cdemo/Person");
+    jclass pClass = env->FindClass("com/example/cdemo/Person");
     //构造方法
-    jmethodID  constructID=env->GetMethodID(pClass,"<init>", "(ILjava/lang/String;)V");
-    if(constructID==NULL){
+    jmethodID constructID = env->GetMethodID(pClass, "<init>", "(ILjava/lang/String;)V");
+    if (constructID == NULL) {
         return;
     }
     //创建名称
-    jstring  name=env->NewStringUTF("alex");
+    jstring name = env->NewStringUTF("alex");
     //创建对象
-    jobject  person=env->NewObject(pClass,constructID,1,name);
-    jmethodID  print=env->GetMethodID(pClass,"print", "()V");
-    if(print==NULL){
+    jobject person = env->NewObject(pClass, constructID, 1, name);
+    jmethodID print = env->GetMethodID(pClass, "print", "()V");
+    if (print == NULL) {
         return;
     }
     //调用对象的方法
-    env->CallVoidMethod(person,print);
+    env->CallVoidMethod(person, print);
     //释放资源
     env->DeleteLocalRef(name);
     env->DeleteLocalRef(pClass);
     env->DeleteLocalRef(person);
-
 }
 
 extern "C"

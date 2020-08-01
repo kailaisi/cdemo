@@ -2,12 +2,23 @@ package com.example.cdemo
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     var testField = "this is test";
+    private val threadDemo by lazy {
+        var threadDemo1 = ThreadDemo()
+        threadDemo1.onErrorListener = object : OnErrorListener {
+            override fun onError(code: Int, msg: String) {
+                println("code:$code,msg:$msg")
+            }
+        }
+        threadDemo1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,9 +49,7 @@ class MainActivity : AppCompatActivity() {
     external fun dynamicJavaFunc2(i: Int): Int
 
     companion object {
-        // Used to load the 'native-lib' library on application startup.
         init {
-            /*这里的lib名称，是和CMakeLists中的lib名称对应的*/
             System.loadLibrary("native-lib")
             //加载so包是有序的一定要那么写，不过这里我是复制过来的，所以没出现问题
             System.loadLibrary("avutil-56");
@@ -53,4 +62,28 @@ class MainActivity : AppCompatActivity() {
             System.loadLibrary("postproc-55");
         }
     }
+
+    fun normal(view: View) {
+        threadDemo.normalThread()
+    }
+
+    fun mutexThread(view: View) {
+        threadDemo.mutexThread()
+    }
+
+    fun callJavaMethod(view: View) {
+        threadDemo.callBack()
+    }
+
+    /**
+     * 播放prm音频文件
+     */
+    fun playPrm(view: View) {
+        val path="/mnt/sdcard/a.pcm"
+        playprm(path)
+    }
+
+    external fun playprm(path: String)
+
+
 }
