@@ -42,6 +42,15 @@ class MainActivity : AppCompatActivity() {
         init {
             /*这里的lib名称，是和CMakeLists中的lib名称对应的*/
             System.loadLibrary("native-lib")
+            //加载so包是有序的一定要那么写，不过这里我是复制过来的，所以没出现问题
+            System.loadLibrary("avutil-56");
+            System.loadLibrary("swresample-3");
+            System.loadLibrary("avcodec-58");
+            System.loadLibrary("avfilter-7");
+            System.loadLibrary("swscale-5");
+            System.loadLibrary("avdevice-58");
+            System.loadLibrary("avformat-58");
+            System.loadLibrary("postproc-55");
         }
     }
 }

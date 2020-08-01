@@ -21,9 +21,7 @@ android {
             }
         }
         ndk{
-            moduleName "HelloJni"
-            ldLibs "log","z","m"
-            abiFilters "armeabi"
+            abiFilters "armeabi-v7a"
         }
     }
 
@@ -36,8 +34,14 @@ android {
     //设置对应的配置文件路径
     externalNativeBuild {
         cmake {
-            path "src/main/cpp/CMakeLists.txt"
+            path "CMakeLists.txt"
             version "3.10.2"
+        }
+    }
+    sourceSets{
+        main{
+            jniLibs.srcDirs = ['src/main/jniLibs']
+
         }
     }
 }

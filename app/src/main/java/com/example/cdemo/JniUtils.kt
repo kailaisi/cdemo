@@ -14,5 +14,5 @@ object JniUtils{
      * 定义native方法。
      * @return true:封装格式转换成功
      */
-    external fun remuxe(inpath:String,outPath:String):Boolean
+    external fun remuxe(inpath:String,outPath:String)
 }
