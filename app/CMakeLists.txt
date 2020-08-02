@@ -31,14 +31,18 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
         ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
         ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/global.h
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.h
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/thread.cpp
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.cpp
-         ${CMAKE_SOURCE_DIR}/src/main/cpp/sles.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/global.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/thread.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/sles.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfCallJava.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfCallJava.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfFFmpeg.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfFFmpeg.h
         )
 
 #搜索并指定预构建库并将路径存储为变量
@@ -54,52 +58,52 @@ find_library( # Sets the name of the path variable.
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
-add_library( avutil
+add_library(avutil
         SHARED
-        IMPORTED )
-set_target_properties( avutil
+        IMPORTED)
+set_target_properties(avutil
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libavutil-56.so)
-add_library( swresample
+add_library(swresample
         SHARED
-        IMPORTED )
-set_target_properties( swresample
+        IMPORTED)
+set_target_properties(swresample
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libswresample-3.so)
-add_library( avcodec
+add_library(avcodec
         SHARED
-        IMPORTED )
-set_target_properties( avcodec
+        IMPORTED)
+set_target_properties(avcodec
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libavcodec-58.so)
-add_library( avfilter
+add_library(avfilter
         SHARED
-        IMPORTED )
-set_target_properties( avfilter
+        IMPORTED)
+set_target_properties(avfilter
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libavfilter-7.so)
-add_library( swscale
+add_library(swscale
         SHARED
-        IMPORTED )
-set_target_properties( swscale
+        IMPORTED)
+set_target_properties(swscale
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libswscale-5.so)
-add_library( avdevice
+add_library(avdevice
         SHARED
-        IMPORTED )
-set_target_properties( avdevice
+        IMPORTED)
+set_target_properties(avdevice
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libavdevice-58.so)
-add_library( avformat
+add_library(avformat
         SHARED
-        IMPORTED )
-set_target_properties( avformat
+        IMPORTED)
+set_target_properties(avformat
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libavformat.so)
-add_library( postproc
+add_library(postproc
         SHARED
-        IMPORTED )
-set_target_properties( postproc
+        IMPORTED)
+set_target_properties(postproc
         PROPERTIES IMPORTED_LOCATION
         ${lib_src_DIR}/libpostproc.so)
 
