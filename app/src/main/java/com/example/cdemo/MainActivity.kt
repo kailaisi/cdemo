@@ -1,10 +1,18 @@
 package com.example.cdemo
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        requestPermission()
         // Example of a call to a native method
         sample_text.text = stringFromJNI()
         testField()
@@ -85,10 +94,32 @@ class MainActivity : AppCompatActivity() {
      * 播放prm音频文件
      */
     fun playPrm(view: View) {
-        val path = "/mnt/sdcard/audio_long8.pcm"
-        playprm(path)
+        var sd = Environment.getExternalStorageDirectory().path + "/queue/audio_long8.pcm"
+        var file = File("/storage/sdcard0/audio_long8.pcm")
+        println("path:$sd, ${file.exists()}")
+        playprm(file.absolutePath)
     }
 
     external fun playprm(path: String)
+    fun requestPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(this, "申请权限", Toast.LENGTH_SHORT).show()
 
+            // 申请 相机 麦克风权限
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ), 100
+            )
+        }
+    }
 }

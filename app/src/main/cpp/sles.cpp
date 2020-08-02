@@ -23,7 +23,7 @@ uint8_t *out_buffer;
 int getPcmData(void **pcm) {
     int size = 0;
     while (!feof(pcmFile)) {
-        size = fread(out_buffer, 44100 * 2 * 2, 1, pcmFile);
+        size = fread(out_buffer, 1, 44100 * 2 * 2, pcmFile);
         if (out_buffer == NULL) {
             LOGE("pcm file read end");
         } else {
@@ -43,6 +43,7 @@ int getPcmData(void **pcm) {
 void bqPlayerCallBack(SLAndroidSimpleBufferQueueItf bq, void *context) {
    int size= getPcmData(&buffer);
     if (buffer != NULL) {
+        //这里会将buffer的数据塞入到队列中，然后会自动进行播放，播放完成以后，会再次调用这个回调函数。只到数据播放完成
         (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue,buffer,size);
     }
 }
@@ -52,8 +53,10 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_cdemo_MainActivity_playprm(JNIEnv *env, jobject thiz, jstring path) {
     const char *url = env->GetStringUTFChars(path, 0);
-    pcmFile = fopen(url, "r");
+    LOGD("文件位置是：%s",url);
+    pcmFile = fopen("/sdcard/audio_long8.pcm", "r");
     if (pcmFile == NULL) {
+        LOGE("获取到的文件为空%s",url);
         return;
     }
     out_buffer = static_cast<uint8_t *>(malloc(41100 * 2 * 2));

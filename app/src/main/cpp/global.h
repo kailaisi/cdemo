@@ -6,6 +6,6 @@
 #define CDEMO_GLOBAL_H
 
 #include "jni.h"
-static JavaVM *globalJvm;
+static JavaVM *globalJvm = NULL;
 
 #endif //CDEMO_GLOBAL_H

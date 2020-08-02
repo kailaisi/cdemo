@@ -4,6 +4,7 @@
 #include "android_log.h"
 #define TAG "native Info"
 
+
 void dynamicJavaFunc1() {
     LOGE("调用了 dynamicJavaFunc1");
 }
@@ -25,6 +26,11 @@ static const char *mClassName = "com/example/cdemo/MainActivity";
 jint JNI_OnLoad(JavaVM *vm, void *unused) {
     JNIEnv *env = NULL;
     globalJvm=vm;
+    if(globalJvm==NULL){
+        LOGE("未获取到全局的JavaVM");
+    }else{
+        LOGE("获取到全局的JavaVM%p",vm);
+    }
     /*获取JNIEnv,这里的第一个参数是二级指针*/
     int result = vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
     if (result != JNI_OK) {
@@ -32,7 +38,7 @@ jint JNI_OnLoad(JavaVM *vm, void *unused) {
         return JNI_VERSION_1_6;
     }
     /*注册方法的类*/
-    jclass classMain = env->FindClass("com/example/cdemo/MainActivity");
+    jclass classMain = env->FindClass(mClassName);
     /*调用动态注册方法，将方法进行注册*/
     result = env->RegisterNatives(classMain, methods, 2);
     if (result != JNI_OK) {
