@@ -11,10 +11,10 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 #创建一个库
 
-include_directories(${CMAKE_SOURCE_DIR}/src/main/cpp/include)
 set(lib_src_DIR ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a)
 message("CURRENT_DIR:" ${CMAKE_SOURCE_DIR})
 set(CMAKE_VERBOSE_MAKEFILE on)
+include_directories(${CMAKE_SOURCE_DIR}/src/main/cpp/include)
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -29,6 +29,7 @@ add_library( # Sets the name of the library.
         # Provides a relative path to your source file(s).
         #设置源文件的相对路径
         ${CMAKE_SOURCE_DIR}/src/main/cpp/native-lib.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/include/libavcodec/avcodec.h
         ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
         ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
         ${CMAKE_SOURCE_DIR}/src/main/cpp/extra.h
@@ -39,10 +40,12 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/src/main/cpp/dynamic-lib.cpp
         ${CMAKE_SOURCE_DIR}/src/main/cpp/JavaListener.cpp
         ${CMAKE_SOURCE_DIR}/src/main/cpp/sles.cpp
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfCallJava.cpp
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfCallJava.h
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfFFmpeg.h
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/JfFFmpeg.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPreparedListener.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPreparedListener.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIAudio.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIAudio.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayer.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayer.cpp
         )
 
 #搜索并指定预构建库并将路径存储为变量

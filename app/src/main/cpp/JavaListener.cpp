@@ -37,7 +37,6 @@ void JavaListener::onError(int type, int code, const char *msg) {
 }
 
 JavaListener::~JavaListener() {
-
 }
 
 

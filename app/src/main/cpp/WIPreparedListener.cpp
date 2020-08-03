@@ -2,10 +2,10 @@
 // Created by Administrator on 2020/8/2.
 //
 
-#include "JfCallJava.h"
+#include "WIPreparedListener.h"
 #include "android_log.h"
 
-JfCallJava::JfCallJava(JavaVM *javaVm, JNIEnv *jniEnv, jobject *obj) {
+WIPreparedListener::WIPreparedListener(JavaVM *javaVm, JNIEnv *jniEnv, jobject *obj) {
     this->javaVm = javaVm;
     this->jniEnv = jniEnv;
     this->jobj = jniEnv->NewGlobalRef(*obj);
@@ -18,11 +18,11 @@ JfCallJava::JfCallJava(JavaVM *javaVm, JNIEnv *jniEnv, jobject *obj) {
 
 }
 
-JfCallJava::~JfCallJava() {
+WIPreparedListener::~WIPreparedListener() {
 
 }
 
-void JfCallJava::onCallPrepared(int threadType) {
+void WIPreparedListener::onCallPrepared(int threadType) {
     if (threadType == MAIN_THREAD) {
         jniEnv->CallObjectMethod(jobj, jmethodID);
     } else {
