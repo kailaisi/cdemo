@@ -4,7 +4,7 @@
 
 #include "WIPlayer.h"
 #include "android_log.h"
-#include "include/libavutil/avutil.h"
+
 WIPlayer::WIPlayer(WIPreparedListener *call, const char *url) : call(call), url(url) {
 
 }
@@ -107,4 +107,10 @@ void WIPlayer::start() {
             break;
         }
     }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_cdemo_jf_JfPlayer_n_1prepared(JNIEnv *env, jobject thiz, jstring source) {
+    WIPlayer.start()
 }

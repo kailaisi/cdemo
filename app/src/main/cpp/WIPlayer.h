@@ -9,6 +9,7 @@ extern "C"
 {
 #include "include/libavcodec/avcodec.h"
 #include "include/libavformat/avformat.h"
+#include "include/libavutil/avutil.h"
 }
 #include "WIPreparedListener.h"
 #include "pthread.h"

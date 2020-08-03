@@ -59,9 +59,3 @@ Java_com_example_cdemo_ThreadDemo_mutexThread(JNIEnv *env, jobject thiz) {
     pthread_create(&custom,NULL,customCallBack,NULL);
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_cdemo_jf_JfPlayer_n_1prepared(JNIEnv *env, jobject thiz, jstring source) {
-
-
-}
