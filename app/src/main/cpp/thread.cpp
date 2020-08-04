@@ -58,4 +58,3 @@ Java_com_example_cdemo_ThreadDemo_mutexThread(JNIEnv *env, jobject thiz) {
     pthread_create(&produce,NULL,produceCallBack,NULL);
     pthread_create(&custom,NULL,customCallBack,NULL);
 }
-

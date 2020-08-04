@@ -22,11 +22,12 @@ class WIPlayer {
 public:
     WIPreparedListener *call = NULL;//初始化回调Java方法的封装类
     const char *url = NULL;//文件的url地址
-    pthread_t decodeThread;
+    pthread_t decodeThread;//解码的子线程
     AVFormatContext *av_format_ctx = NULL;//封装的上下文
     WIAudio *audio = NULL;//封装的Audio信息
+    WIPlayStatus *playStatus=NULL;
 public:
-    WIPlayer(WIPreparedListener *call, const char *url);
+    WIPlayer(WIPreparedListener *call, const char *url, WIPlayStatus *playStatus);
 
     virtual ~WIPlayer();
 

@@ -17,6 +17,7 @@ android {
             cmake {
                 cppFlags ""
                 //设置对应的编译so文件的平台
+                arguments "-DANDROID_STL=c++_shared"
                 abiFilters "armeabi-v7a"
             }
         }

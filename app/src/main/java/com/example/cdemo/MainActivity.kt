@@ -10,12 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.cdemo.jf.JfOnPreparedListener
+import com.example.cdemo.jf.JfPlayer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
-
+    lateinit var jfPlayer:JfPlayer
 
     companion object {
         init {
@@ -56,6 +58,13 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate:newField: $testField")
         dynamicJavaFunc1()
         dynamicJavaFunc2(16)
+        jfPlayer= JfPlayer();
+        jfPlayer.jfOnPreparedListener=object:JfOnPreparedListener{
+            override fun onPrepared() {
+                jfPlayer.start()
+            }
+
+        }
     }
 
     external fun testField(): Unit
@@ -121,5 +130,12 @@ class MainActivity : AppCompatActivity() {
                 ), 100
             )
         }
+    }
+
+    /**
+     * 调用ffm解析文件然后播放的功能
+     */
+    fun ffmplay(view: View) {
+
     }
 }

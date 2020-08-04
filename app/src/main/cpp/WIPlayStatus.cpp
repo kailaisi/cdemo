@@ -3,3 +3,7 @@
 //
 
 #include "WIPlayStatus.h"
+
+WIPlayStatus::WIPlayStatus() {
+    exit=false;
+}

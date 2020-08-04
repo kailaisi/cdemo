@@ -33,6 +33,15 @@ class JfPlayer {
         }.start()
     }
 
+    fun start(){
+        if(source.isNullOrBlank()){
+            return
+        }
+        thread {
+            n_start();
+        }.start()
+    }
+
     /**
      * c++层准备完成以后需要调用listener方法来进行通知处理
      */
@@ -41,4 +50,5 @@ class JfPlayer {
     }
 
     external fun n_prepared(source: String)
+    external fun n_start();
 }

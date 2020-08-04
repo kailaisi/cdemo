@@ -48,8 +48,8 @@ add_library( # Sets the name of the library.
         ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayer.cpp
         ${CMAKE_SOURCE_DIR}/src/main/cpp/WIQueue.h
         ${CMAKE_SOURCE_DIR}/src/main/cpp/WIQueue.cpp
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayState.h
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayState.cpp
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayStatus.h
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/WIPlayStatus.cpp
         )
 
 #搜索并指定预构建库并将路径存储为变量
