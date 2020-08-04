@@ -36,7 +36,8 @@ static const char *mClassName = "com/example/cdemo/MainActivity";
 
 jint JNI_OnLoad(JavaVM *vm, void *unused) {
     JNIEnv *env = NULL;
-    globalJvm = vm;
+    javaVM = vm;
+    globalJvm=vm;
     if (globalJvm == NULL) {
         LOGE("未获取到全局的JavaVM");
     } else {

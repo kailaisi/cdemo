@@ -32,16 +32,17 @@ int WIQueue::putAvPacket(AVPacket *avPacket) {
 int WIQueue::getAvPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&mutexPacket);
     while (playState != NULL && !playState->exit) {
-        if (queuepacket.size() > 0) {
+        if (!queuepacket.empty()) {
             AVPacket *pkt = queuepacket.front();
+            LOGE("从packet队列中取出一个packet之前，队列中剩余数量为%d", queuepacket.size());
             //将pkt中的数据赋值给avPacket，这里不是复制数据，而是复制的指针。
             if (av_packet_ref(avPacket, pkt) == 0) {
                 queuepacket.pop();
             }
             //将队列中的指针内存释放。但是这里指针事项的数据并不会被释放掉
-            av_packet_free(&pkt);
+           /*todo av_packet_free(&pkt);
             av_freep(pkt);
-            pkt = NULL;
+            pkt = NULL;*/
             LOGE("从packet队列中取出一个packet，队列中剩余数量为%d", queuepacket.size());
             break;
         } else {

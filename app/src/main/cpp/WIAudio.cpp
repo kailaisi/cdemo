@@ -29,7 +29,8 @@ void WIAudio::play() {
 
 int WIAudio::resampleAudio() {
     int ret;
-    while (playStatus != NULL && !playStatus->exit) {
+    LOGD("进入resampleAudio方法");
+    while (playStatus != NULL && ! playStatus->exit) {
         avPacket = av_packet_alloc();
         if (queue->getAvPacket(avPacket) != 0) {
             av_packet_free(&avPacket);
@@ -68,11 +69,9 @@ int WIAudio::resampleAudio() {
                 av_packet_free(&avPacket);
                 av_freep(avPacket);
                 avPacket = NULL;
-
                 av_frame_free(&avFrame);
                 av_free(avFrame);
                 avFrame = NULL;
-
                 if (swr_ctx != NULL) {
                     swr_free(&swr_ctx);
                     swr_ctx = NULL;
@@ -90,8 +89,8 @@ int WIAudio::resampleAudio() {
 
             int out_channels = av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO);
             data_size = nb * out_channels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
-            if(LOG_DEBUG){
-                LOGE("data size is %d",data_size);
+            if (LOG_DEBUG) {
+                LOGE("data size is %d", data_size);
             }
             LOGD("DATA SIZE == %d", data_size);
             av_packet_free(&avPacket);
@@ -127,7 +126,8 @@ void playCallBack(SLAndroidSimpleBufferQueueItf bq, void *context) {
     if (audio != NULL) {
         int buffSize = audio->resampleAudio();
         if (buffSize > 0) {
-            (*audio->bqPlayerBufferQueue)->Enqueue(audio->bqPlayerBufferQueue,audio->buffer,buffSize);
+            (*audio->bqPlayerBufferQueue)->Enqueue(audio->bqPlayerBufferQueue, audio->buffer,
+                                                   buffSize);
         }
     }
 }
@@ -166,13 +166,13 @@ void WIAudio::initSlES() {
     if (result != SL_RESULT_SUCCESS) {
         return;
     }
-    result = (*outputMixItf)->GetInterface(outputMixItf, SL_IID_ENVIRONMENTALREVERB,
+/* todo   result = (*outputMixItf)->GetInterface(outputMixItf, SL_IID_ENVIRONMENTALREVERB,
                                            &outputMixEnvironmentalReverb);
     if (SL_RESULT_SUCCESS == result) {//设置环境的属性
         result = (*outputMixEnvironmentalReverb)->SetEnvironmentalReverbProperties(
                 outputMixEnvironmentalReverb, &reverbSettings);
         (void) result;
-    }
+    }*/
     /**
     * create player
     */

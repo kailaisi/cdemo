@@ -24,7 +24,7 @@ WIPreparedListener::~WIPreparedListener() {
 
 void WIPreparedListener::onCallPrepared(int threadType) {
     if (threadType == MAIN_THREAD) {
-        jniEnv->CallObjectMethod(jobj, jmethodID);
+        jniEnv->CallVoidMethod(jobj, jmethodID);
     } else {
         JNIEnv *env;
         int result = javaVm->AttachCurrentThread(&env, 0);
@@ -32,7 +32,7 @@ void WIPreparedListener::onCallPrepared(int threadType) {
             LOGE("GET CHILD THREAD JNIENV ERROR");
             return;
         }
-        env->CallObjectMethod(jobj, jmethodID);
+        env->CallVoidMethod(jobj, jmethodID);
         javaVm->DetachCurrentThread();
     }
 }
