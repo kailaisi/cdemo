@@ -30,7 +30,7 @@ class JfPlayer {
         }
         thread {
             n_prepared(source!!)
-        }.start()
+        }
     }
 
     fun start(){
@@ -39,7 +39,7 @@ class JfPlayer {
         }
         thread {
             n_start();
-        }.start()
+        }
     }
 
     /**

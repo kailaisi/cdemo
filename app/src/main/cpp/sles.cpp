@@ -11,7 +11,7 @@
 
 SLObjectItf engineObject = NULL;//引擎接口对象
 SLEngineItf engineItf = NULL;//具体的引擎对象实例
-SLObjectItf outputMixItf;
+SLObjectItf outputMixItf;//混音器
 SLObjectItf bqPlayerObject = 0;//播放器
 SLPlayItf bqPlayerPlay = 0;//播放器接口
 SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue = 0;//播放器队列接口

@@ -136,6 +136,8 @@ class MainActivity : AppCompatActivity() {
      * 调用ffm解析文件然后播放的功能
      */
     fun ffmplay(view: View) {
-
+        jfPlayer.source="${Environment.getExternalStorageDirectory()}/queue/jjdk.mp4"
+        Log.d(TAG,"Environment.getExternalStorageDirectory() + File.separator  === " + Environment.getExternalStorageDirectory() + File.separator + "");
+        jfPlayer.prepared();
     }
 }
