@@ -48,7 +48,7 @@ int WIAudio::resampleAudio() {
         pthread_mutex_lock(&codec_mutex);
         ret = avcodec_send_packet(pACodecCtx,avPacket);
         LOGE("avcodec_send_packet ret is %d",ret);
-        if (ret != NULL){
+        if (ret !=0){
             av_packet_free(&avPacket);
             av_free(avPacket);
             avPacket = NULL;
@@ -58,6 +58,7 @@ int WIAudio::resampleAudio() {
 
         avFrame = av_frame_alloc();
         ret = avcodec_receive_frame(pACodecCtx,avFrame);
+        //这里第二次就是0了，有问题
         LOGE("avcodec_receive_frame ret is %d",ret);
         if (ret == 0) {//进行重采样
             if (avFrame->channels > 0 && avFrame->channel_layout == 0){//有声道数没有声道布局，所以要设置声道布局
