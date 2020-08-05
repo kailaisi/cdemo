@@ -21,7 +21,6 @@ int WIQueue::putAvPacket(AVPacket *avPacket) {
     pthread_mutex_lock(&mutexPacket);
     //入队
     queuepacket.push(avPacket);
-    LOGE("packet队列增加一个数据，现在的个数为:%d", queuepacket.size());
     //通知消费者
     pthread_cond_signal(&condPacket);
     //解锁
@@ -29,25 +28,23 @@ int WIQueue::putAvPacket(AVPacket *avPacket) {
     return 0;
 }
 
-int WIQueue::getAvPacket(AVPacket *avPacket) {
+int WIQueue::getAvPacket(AVPacket *packet) {
     pthread_mutex_lock(&mutexPacket);
-    while (playState != NULL && !playState->exit) {
-        if (!queuepacket.empty()) {
-            AVPacket *pkt = queuepacket.front();
-            LOGE("从packet队列中取出一个packet之前，队列中剩余数量为%d", queuepacket.size());
-            //将pkt中的数据赋值给avPacket，这里不是复制数据，而是复制的指针。
-            if (av_packet_ref(avPacket, pkt) == 0) {
+    while (playState != NULL && !playState->exit){
+        if (queuepacket.size() > 0){
+            AVPacket *avPacket = queuepacket.front();//取出来
+            if (av_packet_ref(packet,avPacket) == 0){//把pkt的内存数据拷贝到avPacket内存中，只是拷贝了引用
                 queuepacket.pop();
             }
-            //将队列中的指针内存释放。但是这里指针事项的数据并不会被释放掉
-           /*todo av_packet_free(&pkt);
-            av_freep(pkt);
-            pkt = NULL;*/
-            LOGE("从packet队列中取出一个packet，队列中剩余数量为%d", queuepacket.size());
+            av_packet_free(&avPacket);//AVPacket中的第一个参数，就是引用，减到0才真正释放
+            av_free(avPacket);
+            avPacket = NULL;
+            if (LOG_DEBUG){
+                LOGD("从队列中取出一个AVPacket，还剩下%d个",queuepacket.size());
+            }
             break;
         } else {
-            //没有数据，iinxing dengdai
-            pthread_cond_wait(&condPacket, &mutexPacket);
+            pthread_cond_wait(&condPacket,&mutexPacket);
         }
     }
     pthread_mutex_unlock(&mutexPacket);

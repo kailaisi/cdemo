@@ -23,7 +23,7 @@ WIPlayer::~WIPlayer() {
 void *decodeFFmpeg(void *data) {
     WIPlayer *jfFFmpeg = (WIPlayer *) (data);
     jfFFmpeg->decodeAudioThread();
-    pthread_exit(&jfFFmpeg->decodeThread);
+    return 0;
 }
 
 
@@ -38,6 +38,8 @@ void WIPlayer::decodeAudioThread() {
     if (result != 0) {
         LOGE("can not open url:%s", url);
         return;
+    }else{
+        LOGE("open url: %s",url);
     }
     if (avformat_find_stream_info(av_format_ctx, NULL) < 0) {
         LOGE("can not find streams from %s", url);
@@ -48,7 +50,7 @@ void WIPlayer::decodeAudioThread() {
         AVCodecParameters *type = av_format_ctx->streams[i]->codecpar;
         if (type->codec_type == AVMEDIA_TYPE_AUDIO) {
             if (audio == NULL) {
-                audio = new WIAudio(playStatus);
+                audio = new WIAudio(playStatus,type->sample_rate);
                 audio->audio_stream_index = i;
                 audio->av_codec_par = type;
             }
@@ -120,7 +122,6 @@ void WIPlayer::start() {
                     playStatus->exit = true;
                     break;
                 }
-
             }
         }
     }

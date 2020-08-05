@@ -3,12 +3,12 @@
 //
 
 #include "WIAudio.h"
-
-WIAudio::WIAudio(WIPlayStatus *playStatus) : playStatus(playStatus) {
+WIAudio::WIAudio(WIPlayStatus *playStatus, uint sample_rate) {
+    this->playStatus=playStatus;
+    this->sample_rate=sample_rate;
     queue = new WIQueue(playStatus);
-    buffer = (uint8_t *) (av_malloc(44100 * 2 * 2));//每秒的pcm数据
+    buffer = (uint8_t *) (av_malloc(sample_rate * 2 * 2));//每秒的pcm数据
 }
-
 
 WIAudio::~WIAudio() {
 
@@ -18,7 +18,7 @@ WIAudio::~WIAudio() {
 void *decodePlay(void *data) {
     WIAudio *audio = (WIAudio *) (data);
     audio->initSlES();
-    pthread_exit(&audio->playThread);
+    return 0;
 }
 
 
@@ -30,53 +30,65 @@ void WIAudio::play() {
 int WIAudio::resampleAudio() {
     int ret;
     LOGD("进入resampleAudio方法");
-    while (playStatus != NULL && ! playStatus->exit) {
+    if(playStatus!=NULL){
+        LOGE("playStatus不为空");
+    }
+    LOGD("playStatus%s",playStatus);
+    LOGD("plasstatus:%d",playStatus->exit);
+    while (playStatus != NULL && !playStatus->exit) {
         avPacket = av_packet_alloc();
+        LOGD("avPacket申请");
         if (queue->getAvPacket(avPacket) != 0) {
             av_packet_free(&avPacket);
             av_free(&avPacket);
             avPacket = NULL;
             continue;
         }
-        ret = avcodec_send_packet(pACodecCtx, avPacket);
-        if (ret != 0) {
+        LOGD("getAvPacket%d",avPacket);
+        pthread_mutex_lock(&codec_mutex);
+        ret = avcodec_send_packet(pACodecCtx,avPacket);
+        LOGE("avcodec_send_packet ret is %d",ret);
+        if (ret != NULL){
             av_packet_free(&avPacket);
-            av_free(&avPacket);
+            av_free(avPacket);
             avPacket = NULL;
+            pthread_mutex_unlock(&codec_mutex);
             continue;
         }
+
         avFrame = av_frame_alloc();
-        ret = avcodec_receive_frame(pACodecCtx, avFrame);
-        if (ret == 0) {//进行重新采样
-            if (avFrame->channels > 0 && avFrame->channel_layout == 0) {
-                //有声道数没有声道布局，所以要设置声道布局
-                avFrame->channel_layout = av_get_default_channel_layout(avFrame->channels);
-            } else if (avFrame->channels == 0 && avFrame->channel_layout > 0) {
-                //有声道布局没有声道数，所以要设置声道数
+        ret = avcodec_receive_frame(pACodecCtx,avFrame);
+        LOGE("avcodec_receive_frame ret is %d",ret);
+        if (ret == 0) {//进行重采样
+            if (avFrame->channels > 0 && avFrame->channel_layout == 0){//有声道数没有声道布局，所以要设置声道布局
+                avFrame->channel_layout = av_get_default_channel_layout(avFrame->channels);//设置声道布局
+            } else if (avFrame->channels == 0 && avFrame->channel_layout > 0){//有声道布局没有声道数，所以要设置声道数
                 avFrame->channels = av_get_channel_layout_nb_channels(avFrame->channel_layout);
             }
+
             SwrContext *swr_ctx = NULL;
             swr_ctx = swr_alloc_set_opts(NULL,
                                          AV_CH_LAYOUT_STEREO,// 输出声道布局:立体声
                                          AV_SAMPLE_FMT_S16,//输出采样位数格式
                                          avFrame->sample_rate,//输出的采样率
                                          avFrame->channel_layout,//输入声道布局
-                                         (AVSampleFormat) (avFrame->format),//输入采样位数格式
+                                         (AVSampleFormat)(avFrame->format),//输入采样位数格式
                                          avFrame->sample_rate,//输入采样率
                                          NULL,
                                          NULL);
-            if (!swr_ctx || swr_init(swr_ctx) < 0) {
+
+            if (!swr_ctx || swr_init(swr_ctx) < 0){
                 av_packet_free(&avPacket);
-                av_freep(avPacket);
+                av_free(avPacket);
                 avPacket = NULL;
                 av_frame_free(&avFrame);
                 av_free(avFrame);
                 avFrame = NULL;
-                if (swr_ctx != NULL) {
+                if (swr_ctx != NULL){
                     swr_free(&swr_ctx);
                     swr_ctx = NULL;
                 }
-                LOGE("!swr_ctx || swr_init(swr_ctx) < 0");
+                pthread_mutex_unlock(&codec_mutex);
                 continue;
             }
 
@@ -84,31 +96,37 @@ int WIAudio::resampleAudio() {
             int nb = swr_convert(swr_ctx,
                                  &buffer,//转码后输出的PCM数据大小
                                  avFrame->nb_samples,//输出采样个数
-                                 (const uint8_t **) (avFrame->data),
+                                 (const uint8_t **)(avFrame->data),
                                  avFrame->nb_samples);
 
             int out_channels = av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO);
+
             data_size = nb * out_channels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
-            if (LOG_DEBUG) {
-                LOGE("data size is %d", data_size);
-            }
-            LOGD("DATA SIZE == %d", data_size);
+            /*if (LOG_DEBUG){
+                LOGD("DATA SIZE == %d",data_size);
+            }*/
+
             av_packet_free(&avPacket);
             av_free(avPacket);
             avPacket = NULL;
+
             av_frame_free(&avFrame);
             av_free(avFrame);
             avFrame = NULL;
+
             swr_free(&swr_ctx);
             swr_ctx = NULL;
+            pthread_mutex_unlock(&codec_mutex);
             break;
         } else {
             av_packet_free(&avPacket);
             av_free(avPacket);
             avPacket = NULL;
+
             av_frame_free(&avFrame);
             av_free(avFrame);
             avFrame = NULL;
+            pthread_mutex_unlock(&codec_mutex);
             continue;
         }
     }
@@ -124,10 +142,10 @@ int WIAudio::resampleAudio() {
 void playCallBack(SLAndroidSimpleBufferQueueItf bq, void *context) {
     WIAudio *audio = (WIAudio *) context;
     if (audio != NULL) {
+        LOGD("playCallBack");
         int buffSize = audio->resampleAudio();
         if (buffSize > 0) {
-            (*audio->bqPlayerBufferQueue)->Enqueue(audio->bqPlayerBufferQueue, audio->buffer,
-                                                   buffSize);
+            (*audio->bqPlayerBufferQueue)->Enqueue(audio->bqPlayerBufferQueue, audio->buffer,buffSize);
         }
     }
 }
@@ -166,13 +184,13 @@ void WIAudio::initSlES() {
     if (result != SL_RESULT_SUCCESS) {
         return;
     }
-/* todo   result = (*outputMixItf)->GetInterface(outputMixItf, SL_IID_ENVIRONMENTALREVERB,
+    result = (*outputMixItf)->GetInterface(outputMixItf, SL_IID_ENVIRONMENTALREVERB,
                                            &outputMixEnvironmentalReverb);
     if (SL_RESULT_SUCCESS == result) {//设置环境的属性
         result = (*outputMixEnvironmentalReverb)->SetEnvironmentalReverbProperties(
                 outputMixEnvironmentalReverb, &reverbSettings);
         (void) result;
-    }*/
+    }
     /**
     * create player
     */
@@ -189,7 +207,7 @@ void WIAudio::initSlES() {
     //SL_BYTEORDER_LITTLEENDIAN：小端模式
     SLDataFormat_PCM formatPcm = {SL_DATAFORMAT_PCM,
                                   2,
-                                  SL_SAMPLINGRATE_44_1,
+                                  getCurrentSampleRateForOpenSLES(sample_rate),
                                   SL_PCMSAMPLEFORMAT_FIXED_16,
                                   SL_PCMSAMPLEFORMAT_FIXED_16,
                                   SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
@@ -201,10 +219,11 @@ void WIAudio::initSlES() {
     SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixItf};
     SLDataSink audioSnk = {&loc_outmix, NULL};
     //需要的接口  操作队列的接口
-    const SLInterfaceID ids[1] = {SL_IID_BUFFERQUEUE};
-    const SLboolean req[1] = {SL_BOOLEAN_TRUE};
+    const SLInterfaceID ids[2] = {SL_IID_BUFFERQUEUE, SL_IID_PLAYBACKRATE};
+
+    const SLboolean req[2] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
     //3.3 创建播放器
-    result = (*engineItf)->CreateAudioPlayer(engineItf, &bqPlayerObject, &audioSrc, &audioSnk, 1,
+    result = (*engineItf)->CreateAudioPlayer(engineItf, &bqPlayerObject, &audioSrc, &audioSnk, 2,
                                              ids, req);
     if (result != SL_RESULT_SUCCESS) {
         return;
@@ -231,3 +250,53 @@ void WIAudio::initSlES() {
     //手动激活回调函数
     playCallBack(bqPlayerBufferQueue, this);
 }
+
+uint WIAudio::getCurrentSampleRateForOpenSLES(int sample_rate) {
+    int rate = 0;
+    switch (sample_rate) {
+        case 8000:
+            rate = SL_SAMPLINGRATE_8;
+            break;
+        case 11025:
+            rate = SL_SAMPLINGRATE_11_025;
+            break;
+        case 12000:
+            rate = SL_SAMPLINGRATE_12;
+            break;
+        case 16000:
+            rate = SL_SAMPLINGRATE_16;
+            break;
+        case 22050:
+            rate = SL_SAMPLINGRATE_22_05;
+            break;
+        case 24000:
+            rate = SL_SAMPLINGRATE_24;
+            break;
+        case 32000:
+            rate = SL_SAMPLINGRATE_32;
+            break;
+        case 44100:
+            rate = SL_SAMPLINGRATE_44_1;
+            break;
+        case 48000:
+            rate = SL_SAMPLINGRATE_48;
+            break;
+        case 64000:
+            rate = SL_SAMPLINGRATE_64;
+            break;
+        case 88200:
+            rate = SL_SAMPLINGRATE_88_2;
+            break;
+        case 96000:
+            rate = SL_SAMPLINGRATE_96;
+            break;
+        case 192000:
+            rate = SL_SAMPLINGRATE_192;
+            break;
+        default:
+            rate = SL_SAMPLINGRATE_44_1;
+    }
+    return rate;
+}
+
+

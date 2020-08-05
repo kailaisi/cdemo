@@ -39,8 +39,10 @@ public:
     SLObjectItf bqPlayerObject = 0;//播放器
     SLPlayItf bqPlayerPlay = 0;//播放器接口
     SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue = 0;//播放器队列接口
+
+    int sample_rate;
 public:
-    WIAudio(WIPlayStatus *playStatus);
+    WIAudio(WIPlayStatus *playStatus,uint sample_rate);
 
     virtual ~WIAudio();
 
@@ -54,6 +56,10 @@ public:
      */
     void initSlES();
 
+
+    uint getCurrentSampleRateForOpenSLES(int rate);
+
+    pthread_mutex_t codec_mutex;
 };
 
 
